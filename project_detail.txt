@@ -37,6 +37,8 @@ Code Quality: Clean and modular.
 UI Design: Intuitive and responsive.
 State Management: Correct management of video states.
 Error Handling: Proper handling for video playback/download.
+
+
 Data Example (JSON format): You can use this sample JSON for video data:
 
 
