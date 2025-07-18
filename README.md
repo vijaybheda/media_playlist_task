@@ -1,5 +1,7 @@
 # Media Playlist Task
 
+[▶️ Watch recording.mp4](./recording.mp4)
+
 A Flutter application for browsing, viewing, and managing a playlist of videos, with support for offline downloads and queue management.
 
 ## Features
