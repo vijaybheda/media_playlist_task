@@ -1,13 +1,22 @@
 import 'package:get/get.dart';
 import 'package:video_player/video_player.dart';
 import 'dart:io';
+import 'package:media_playlist_task/features/video/controllers/video_list_controller.dart';
 
 class VideoPlayerGetXController extends GetxController {
   String? url;
   String? filePath;
   final RxBool shouldPlay = true.obs;
+  final String videoId;
+  final Duration initialPosition;
 
-  VideoPlayerGetXController({this.url, this.filePath, bool shouldPlay = true}) {
+  VideoPlayerGetXController({
+    this.url,
+    this.filePath,
+    bool shouldPlay = true,
+    required this.videoId,
+    this.initialPosition = Duration.zero,
+  }) {
     this.shouldPlay.value = shouldPlay;
   }
 
@@ -21,8 +30,8 @@ class VideoPlayerGetXController extends GetxController {
   final isFullScreen = false.obs;
   final showControls = true.obs;
   final volume = 1.0.obs;
-  final isMuted = false.obs; // Add mute state
-  final position = Duration.zero.obs; // Add position observable
+  final isMuted = false.obs;
+  final position = Duration.zero.obs;
 
   @override
   void onInit() {
@@ -59,8 +68,11 @@ class VideoPlayerGetXController extends GetxController {
         return;
       }
       await ctrl.initialize();
-      ctrl.setLooping(true);
+      await ctrl.setLooping(false); // No looping
       ctrl.setVolume(isMuted.value ? 0.0 : volume.value);
+      if (initialPosition > Duration.zero) {
+        await ctrl.seekTo(initialPosition);
+      }
       controller.value = ctrl;
       isInitialized.value = true;
       if (shouldPlay.value) {
@@ -77,12 +89,18 @@ class VideoPlayerGetXController extends GetxController {
     shouldPlay.value = play;
   }
 
-  void updateSource({String? newFilePath, String? newUrl}) {
+  void updateSource({
+    String? newFilePath,
+    String? newUrl,
+    Duration? newPosition,
+  }) {
     if (newFilePath != filePath || newUrl != url) {
       filePath = newFilePath;
       url = newUrl;
       _disposeController();
       _initializeController();
+    } else if (newPosition != null) {
+      controller.value?.seekTo(newPosition);
     }
   }
 
@@ -98,6 +116,13 @@ class VideoPlayerGetXController extends GetxController {
     if (ctrl == null) return;
     isPlaying.value = ctrl.value.isPlaying;
     position.value = ctrl.value.position;
+    // Update the global video position in VideoListController
+    if (videoId.isNotEmpty) {
+      final listController = Get.isRegistered<VideoListController>()
+          ? Get.find<VideoListController>()
+          : null;
+      listController?.updateVideoPosition(videoId, ctrl.value.position);
+    }
     if (ctrl.value.hasError) {
       isError.value = true;
       errorMessage.value = ctrl.value.errorDescription ?? 'Playback error';

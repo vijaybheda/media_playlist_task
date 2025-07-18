@@ -114,17 +114,23 @@ class _VideoListScreenState extends State<VideoListScreen> {
 }
 
 Widget _buildThumbnail(String url) {
-  return CachedNetworkImage(
-    imageUrl: url,
-    fit: BoxFit.cover,
-    placeholder: (context, url) => Container(
-      color: Colors.grey[200],
-      child: const Center(child: CircularProgressIndicator(strokeWidth: 2)),
+  return Container(
+    clipBehavior: Clip.antiAliasWithSaveLayer,
+    decoration: BoxDecoration(
+      borderRadius: BorderRadius.circular(12),
     ),
-    errorWidget: (context, url, error) => Container(
-      color: Colors.grey[300],
-      child: const Center(
-        child: Icon(Icons.broken_image, size: 64, color: Colors.grey),
+    child: CachedNetworkImage(
+      imageUrl: url,
+      fit: BoxFit.cover,
+      placeholder: (context, url) => Container(
+        color: Colors.grey[200],
+        child: const Center(child: CircularProgressIndicator(strokeWidth: 2)),
+      ),
+      errorWidget: (context, url, error) => Container(
+        color: Colors.grey[300],
+        child: const Center(
+          child: Icon(Icons.broken_image, size: 64, color: Colors.grey),
+        ),
       ),
     ),
   );

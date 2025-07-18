@@ -33,23 +33,24 @@ class VideoViewScreen extends StatelessWidget {
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            AspectRatio(
-              aspectRatio: 16 / 9,
-              child: isDownloaded
-                  ? VideoPlayerWidget(
-                      filePath: localPath,
-                      thumbnailUrl: video.thumbnailUrl,
-                      tag: 'video_detail_${video.id}',
-                // todo
-                index: 0,
-                    )
-                  : VideoPlayerWidget(
-                      url: video.videoUrl,
-                      thumbnailUrl: video.thumbnailUrl,
-                      tag: 'video_detail_${video.id}',
-                // todo:
-                index: 0,
-                    ),
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 16),
+              child: AspectRatio(
+                aspectRatio: 16 / 9,
+                child: isDownloaded
+                    ? VideoPlayerWidget(
+                  filePath: localPath,
+                  thumbnailUrl: video.thumbnailUrl,
+                  tag: 'video_detail_${video.id}',
+                  index: 0,
+                )
+                    : VideoPlayerWidget(
+                  url: video.videoUrl,
+                  thumbnailUrl: video.thumbnailUrl,
+                  tag: 'video_detail_${video.id}',
+                  index: 0,
+                ),
+              ),
             ),
             Padding(
               padding: const EdgeInsets.all(16.0),
@@ -90,20 +91,26 @@ class SavedVideosScreen extends StatelessWidget {
         itemBuilder: (context, index) {
           final video = saved[index];
           return ListTile(
-            leading: CachedNetworkImage(
-              imageUrl: video.thumbnailUrl,
-              width: 80,
-              fit: BoxFit.cover,
-              placeholder: (context, url) => Container(
-                color: Colors.grey[200],
-                child: const Center(
-                  child: CircularProgressIndicator(strokeWidth: 2),
-                ),
+            leading: Container(
+              clipBehavior: Clip.antiAliasWithSaveLayer,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12),
               ),
-              errorWidget: (context, url, error) => Container(
-                color: Colors.grey[300],
-                child: const Center(
-                  child: Icon(Icons.broken_image, size: 40, color: Colors.grey),
+              child: CachedNetworkImage(
+                imageUrl: video.thumbnailUrl,
+                width: 80,
+                fit: BoxFit.cover,
+                placeholder: (context, url) => Container(
+                  color: Colors.grey[200],
+                  child: const Center(
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  ),
+                ),
+                errorWidget: (context, url, error) => Container(
+                  color: Colors.grey[300],
+                  child: const Center(
+                    child: Icon(Icons.broken_image, size: 40, color: Colors.grey),
+                  ),
                 ),
               ),
             ),

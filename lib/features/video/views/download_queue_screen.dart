@@ -226,6 +226,7 @@ class DownloadQueueScreen extends StatelessWidget {
                               'videoFilePaths',
                               controller.videoFilePaths,
                             );
+                            controller.deleteVideo(videoId);
                           },
                         ),
                       ),
